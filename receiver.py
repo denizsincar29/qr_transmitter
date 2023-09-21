@@ -3,7 +3,7 @@ from time import sleep, time
 import cv2
 # import chunker
 
-cap = cv2.VideoCapture("chun/video.mp4")  # just for debugging. after success we'll make webcam.
+cap = cv2.VideoCapture(0)  # just for debugging. after success we'll make webcam.
 detector = cv2.QRCodeDetector()
 c=0
 a=''
