@@ -9,7 +9,7 @@ c=0
 a=''
 while c!=27:
     _, img = cap.read()
-    data, bbox, _ = detector.detectAndDecode(img)
+    data, bbox, _ = detector.detectAndDecode(cv2.flip(img, 1))
     if data:
         data=b64decode(data)
         if a!=data:
