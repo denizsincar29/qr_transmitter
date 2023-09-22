@@ -1,2 +1,2 @@
-    __pycache__/
-    /cqr.py
+    __pycache__/*
+    */cqr.py
