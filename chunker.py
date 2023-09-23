@@ -1,5 +1,6 @@
 from os import path
 import qrcode
+from qrcode.constants import ERROR_CORRECT_H as highcor
 from base64 import b64encode as enbase
 from io import BytesIO
 import numpy as np
@@ -92,6 +93,12 @@ def decode_chunk(chunk):
     """
     return int.from_bytes(chunk[:2], byteorder='big'), chunk[2:]
 
+def notmissing(chunks, metadata):
+    size, qty, filename=demetadata(metadata)
+    missing=[i for i in range(1, qty+1) if i not in chunks]
+    return len(missing)==0, missing
+
+
 def dechunk(chunks, metadata):
     """
     Decodes and combines the received chunks of data.
@@ -122,10 +129,13 @@ def dechunk(chunks, metadata):
 
 def enqrcode(data: str):
     f=BytesIO()    
-    qr=qrcode.QRCode(box_size=10, border=4)
+    qr=qrcode.QRCode(box_size=10, border=4, error_correction=highcor)
     qr.add_data(enbase(data))
     qr.make(fit=True)
-    qr.make_image(fill_color="black", back_color="white").save(f)
-    f.seek(0)
-    return cv2.imdecode(np.asarray(bytearray(f.read()), dtype="uint8"), cv2.IMREAD_COLOR)
+    image=qr.make_image(fill_color="black", back_color="white")
+    # Convert to NumPy array for use with OpenCV
+    image = np.array(image.convert('RGB'))
+
+    # Convert RGB to BGR color space (OpenCV uses BGR by default)
+    return image[:, :, ::-1].copy()  # but why copied?
 
